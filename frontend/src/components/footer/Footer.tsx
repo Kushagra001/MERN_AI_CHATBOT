@@ -13,17 +13,7 @@ const Footer = () => {
         }}
       >
         <p style={{ fontSize: "30px", textAlign: "center", padding: "20px" }}>
-          Built With love by
-          <span>
-            <Link
-              style={{ color: "white" }}
-              className="nav-link"
-              to={"https://youtube.com/indiancoders"}
-            >
-              Indian Coders
-            </Link>
-          </span>
-          💘
+          Built with 💘 by Kushagra Singh Negi
         </p>
       </div>
     </footer>

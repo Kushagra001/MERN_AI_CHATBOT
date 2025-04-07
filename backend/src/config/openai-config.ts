@@ -1,4 +1,5 @@
 import { Configuration } from "openai";
+import ts from "typescript";
 
 export const configureOpenAI = () => {
   const config = new Configuration({
