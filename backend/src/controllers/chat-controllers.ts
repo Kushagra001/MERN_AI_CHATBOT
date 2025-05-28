@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import User from "../models/User.js";
 import { configureOpenAI } from "../config/openai-config.js";
 import { OpenAIApi, ChatCompletionRequestMessage } from "openai";
+
 export const generateChatCompletion = async (
   req: Request,
   res: Response,
@@ -30,10 +31,18 @@ export const generateChatCompletion = async (
       model: "gpt-3.5-turbo",
       messages: chats,
     });
-    user.chats.push(chatResponse.data.choices[0].message);
+    
+    const responseMessage = chatResponse.data.choices[0].message;
+    if (responseMessage) {
+      user.chats.push({
+        role: responseMessage.role,
+        content: responseMessage.content || ""
+      });
+    }
+    
     await user.save();
     return res.status(200).json({ chats: user.chats });
-  } catch (error) {
+  } catch (error: unknown) {
     console.log(error);
     return res.status(500).json({ message: "Something went wrong" });
   }
@@ -45,7 +54,6 @@ export const sendChatsToUser = async (
   next: NextFunction
 ) => {
   try {
-    //user token check
     const user = await User.findById(res.locals.jwtData.id);
     if (!user) {
       return res.status(401).send("User not registered OR Token malfunctioned");
@@ -54,9 +62,12 @@ export const sendChatsToUser = async (
       return res.status(401).send("Permissions didn't match");
     }
     return res.status(200).json({ message: "OK", chats: user.chats });
-  } catch (error) {
+  } catch (error: unknown) {
     console.log(error);
-    return res.status(200).json({ message: "ERROR", cause: error.message });
+    return res.status(200).json({ 
+      message: "ERROR", 
+      cause: error instanceof Error ? error.message : "Unknown error" 
+    });
   }
 };
 
@@ -66,7 +77,6 @@ export const deleteChats = async (
   next: NextFunction
 ) => {
   try {
-    //user token check
     const user = await User.findById(res.locals.jwtData.id);
     if (!user) {
       return res.status(401).send("User not registered OR Token malfunctioned");
@@ -74,12 +84,14 @@ export const deleteChats = async (
     if (user._id.toString() !== res.locals.jwtData.id) {
       return res.status(401).send("Permissions didn't match");
     }
-    //@ts-ignore
     user.chats = [];
     await user.save();
     return res.status(200).json({ message: "OK" });
-  } catch (error) {
+  } catch (error: unknown) {
     console.log(error);
-    return res.status(200).json({ message: "ERROR", cause: error.message });
+    return res.status(200).json({ 
+      message: "ERROR", 
+      cause: error instanceof Error ? error.message : "Unknown error" 
+    });
   }
 };

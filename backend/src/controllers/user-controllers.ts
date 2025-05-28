@@ -13,9 +13,12 @@ export const getAllUsers = async (
     //get all users
     const users = await User.find();
     return res.status(200).json({ message: "OK", users });
-  } catch (error) {
+  } catch (error: unknown) {
     console.log(error);
-    return res.status(200).json({ message: "ERROR", cause: error.message });
+    return res.status(200).json({ 
+      message: "ERROR", 
+      cause: error instanceof Error ? error.message : "Unknown error" 
+    });
   }
 };
 
@@ -55,9 +58,12 @@ export const userSignup = async (
     return res
       .status(201)
       .json({ message: "OK", name: user.name, email: user.email });
-  } catch (error) {
+  } catch (error: unknown) {
     console.log(error);
-    return res.status(200).json({ message: "ERROR", cause: error.message });
+    return res.status(200).json({ 
+      message: "ERROR", 
+      cause: error instanceof Error ? error.message : "Unknown error" 
+    });
   }
 };
 
@@ -101,9 +107,12 @@ export const userLogin = async (
     return res
       .status(200)
       .json({ message: "OK", name: user.name, email: user.email });
-  } catch (error) {
+  } catch (error: unknown) {
     console.log(error);
-    return res.status(200).json({ message: "ERROR", cause: error.message });
+    return res.status(200).json({ 
+      message: "ERROR", 
+      cause: error instanceof Error ? error.message : "Unknown error" 
+    });
   }
 };
 
@@ -124,9 +133,12 @@ export const verifyUser = async (
     return res
       .status(200)
       .json({ message: "OK", name: user.name, email: user.email });
-  } catch (error) {
+  } catch (error: unknown) {
     console.log(error);
-    return res.status(200).json({ message: "ERROR", cause: error.message });
+    return res.status(200).json({ 
+      message: "ERROR", 
+      cause: error instanceof Error ? error.message : "Unknown error" 
+    });
   }
 };
 
@@ -155,8 +167,11 @@ export const userLogout = async (
     return res
       .status(200)
       .json({ message: "OK", name: user.name, email: user.email });
-  } catch (error) {
+  } catch (error: unknown) {
     console.log(error);
-    return res.status(200).json({ message: "ERROR", cause: error.message });
+    return res.status(200).json({ 
+      message: "ERROR", 
+      cause: error instanceof Error ? error.message : "Unknown error" 
+    });
   }
 };
