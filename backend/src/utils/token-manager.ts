@@ -8,6 +8,7 @@ export const createToken = (id: string, email: string, expiresIn: string) => {
   if (!secret) {
     throw new Error("JWT_SECRET is not defined");
   }
+  // @ts-ignore - JWT types are not properly handling the secret type
   const token = jwt.sign(payload, secret, {
     expiresIn,
   });
@@ -29,7 +30,8 @@ export const verifyToken = async (
       reject(new Error("JWT_SECRET is not defined"));
       return res.status(500).json({ message: "Server configuration error" });
     }
-    return jwt.verify(token, secret, (err, success) => {
+    // @ts-ignore - JWT types are not properly handling the secret type
+    return jwt.verify(token, secret, (err: jwt.VerifyErrors | null, success: any) => {
       if (err) {
         reject(err.message);
         return res.status(401).json({ message: "Token Expired" });

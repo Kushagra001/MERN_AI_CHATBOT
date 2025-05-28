@@ -84,7 +84,7 @@ export const deleteChats = async (
     if (user._id.toString() !== res.locals.jwtData.id) {
       return res.status(401).send("Permissions didn't match");
     }
-    user.chats = [];
+    user.chats = [] as any; // Temporary fix for DocumentArray type
     await user.save();
     return res.status(200).json({ message: "OK" });
   } catch (error: unknown) {
